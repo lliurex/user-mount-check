@@ -1,0 +1,14 @@
+Source: user-mount-check
+Section: admin
+Priority: extra
+Maintainer: Equipo LliureX <lliurex@gva.es>
+Build-Depends: debhelper (>= 8.0.0)
+Standards-Version: 3.9.8
+Homepage: http://www.lliurex.net
+#Vcs-Svn: http://svn.lliurex.net/pandora/n4d-samba/trunk
+
+Package: user-mount-check
+Architecture: all
+Depends: ${shlibs:Depends}, ${misc:Depends}, n4d, kdialog
+Description: User network mounts checker
+ Checks status of user mounts on xdg autostart
