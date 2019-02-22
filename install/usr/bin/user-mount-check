@@ -1,0 +1,129 @@
+#!/usr/bin/python3
+
+import ssl
+import xmlrpc.client
+import sys
+import os
+
+'''
+import gi
+gi.require_version('Gtk','3.0')
+from gi.repository import Gtk
+'''
+
+class XDGClientMountTest:
+	
+	DEBUG=True
+	SYSLOG=True
+	
+	def __init__(self):
+		
+		context=ssl._create_unverified_context()
+		self.local_client=xmlrpc.client.ServerProxy("https://localhost:9779",allow_none=True,context=context)
+		self.server_client=xmlrpc.client.ServerProxy("https://server:9779",allow_none=True,context=context)
+		
+	#def init
+	
+	def _dprint(self,msg):
+		
+		if XDGClientMountTest.DEBUG:
+			msg="[XDGClientMountTest] %s"%str(msg)
+			print(msg)
+			
+		
+		
+	#def _dprint
+	
+	def _is_autofs_enabled(self):
+		
+		ret=self.server_client.is_autofs_present("","MountCheck")
+		return ret["msg"]
+		
+	#def is_autofs_enabled
+	
+	def _is_autofs_mounted(self):
+		
+		ret=self.server_client.is_autofs_mounted("","MountCheck")
+		return ret["msg"]
+		
+	#def is_autofs_mounted
+	
+	def _are_user_mounts_ready(self):
+		
+		user=os.environ["USER"]
+		ret=self.local_client.user_mounts_found("","MountCheck",user)
+		return ret["msg"]
+		
+	#def _are_user_mounts_ready
+	
+	def _is_master_alive(self):
+		
+		ret=self.server_client.is_master_alive("","MountCheck")
+		if len(ret["msg"])>0:
+			self._dprint("Is master alive? %s"%ret["msg"])
+		return ret["status"]
+		
+	#def _ping_master
+	
+	
+	def check_slave_mounts(self):
+		
+		error_msg=""
+		
+		if self._is_autofs_enabled():
+			self._dprint("AutoFS enabled on server")
+			if self._is_autofs_mounted():
+				self._dprint("AutoFS is mounted on server")
+				if self._are_user_mounts_ready():
+					self._dprint("User mounts found.")
+					self._dprint("MOUNTS ARE OK")
+					sys.exit(0)
+				else:
+					error_msg="User mounts failed. Working with local files only"
+					if not self._is_master_alive():
+						error_msg="Master server does not respond. Working with local files only"
+					
+			else:
+				error_msg="Master server is not up. Working with local files only"
+		
+		self._dprint(error_msg)
+		self.run_dialog("Error mounting user directories",error_msg)
+		sys.exit(1)
+		
+	#def check_slave_mounts
+
+
+	def run_gtk_dialog(self,primary_msg,secondary_msg):
+		
+		dialog = Gtk.MessageDialog(None,0,Gtk.MessageType.WARNING,Gtk.ButtonsType.OK,primary_msg)
+		dialog.format_secondary_text(secondary_msg)
+		#dialog.set_icon_name("firefox")
+		dialog.run()
+		dialog.destroy()
+		
+	#def run_dialog
+
+
+	def run_kde_dialog(self,primary_msg,secondary_msg):
+
+		command='sleep 3;kdialog --title "%s" --passivepopup "%s" 15 --icon dialog-warning'%(primary_msg,secondary_msg)
+		os.system(command)
+
+	#def run_kde_dialog
+
+
+	def run_dialog(self,primary_msg,secondary_msg):
+
+		self.run_kde_dialog(primary_msg,secondary_msg)
+
+	#def run_dialog
+
+
+	
+#class XDGClientMountTest
+
+if __name__=="__main__":
+	
+	xcmt=XDGClientMountTest()
+	xcmt.check_slave_mounts()
+	

@@ -1,0 +1,10 @@
+[SETUP]
+type=python
+path=MountCheck.py
+class=MountCheck
+[METHODS]
+is_autofs_present=anonymous
+is_autofs_mounted=anonymous
+user_mounts_found=anonymous
+is_master_alive=anonymous
+user_mounts_found=anonymous
