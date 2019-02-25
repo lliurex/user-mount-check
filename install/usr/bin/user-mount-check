@@ -85,6 +85,8 @@ class XDGClientMountTest:
 					
 			else:
 				error_msg="Master server is not up. Working with local files only"
+		else:
+			sys.exit(0)
 		
 		self._dprint(error_msg)
 		self.run_dialog("Error mounting user directories",error_msg)
@@ -106,7 +108,7 @@ class XDGClientMountTest:
 
 	def run_kde_dialog(self,primary_msg,secondary_msg):
 
-		command='sleep 3;kdialog --title "%s" --passivepopup "%s" 15 --icon dialog-warning'%(primary_msg,secondary_msg)
+		command='sleep 5;kdialog --title "%s" --passivepopup "%s" 15 --icon dialog-warning'%(primary_msg,secondary_msg)
 		os.system(command)
 
 	#def run_kde_dialog
