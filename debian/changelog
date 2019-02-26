@@ -1,3 +1,9 @@
+user-mount-check (0.2.1) bionic; urgency=high
+
+  * Fixed user exception
+
+ -- Hector Garcia Huerta <hectorgh@gmail.com>  Tue, 26 Feb 2019 16:53:04 +0100
+
 user-mount-check (0.2) bionic; urgency=high
 
   * Improved script logic.
