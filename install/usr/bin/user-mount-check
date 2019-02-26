@@ -20,7 +20,7 @@ class XDGClientMountTest:
 	def __init__(self):
 		
 		self.user=os.environ["USER"]
-		if pwd.getpwnam(user).pw_uid < 1042:
+		if pwd.getpwnam(self.user).pw_uid < 1042:
 			sys.exit(0)
 		
 		context=ssl._create_unverified_context()
