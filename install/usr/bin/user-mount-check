@@ -4,6 +4,7 @@ import ssl
 import xmlrpc.client
 import sys
 import os
+import pwd
 
 '''
 import gi
@@ -18,9 +19,20 @@ class XDGClientMountTest:
 	
 	def __init__(self):
 		
+		self.user=os.environ["USER"]
+		if pwd.getpwnam(user).pw_uid < 1042:
+			sys.exit(0)
+		
 		context=ssl._create_unverified_context()
+		
+		try:
+			server=socket.gethostbyname("server")
+		except Exception as e:
+			self.run_dialog("Error mounting user directories","Can't resolve 'server'")
+			sys.exit(1)
+		
 		self.local_client=xmlrpc.client.ServerProxy("https://localhost:9779",allow_none=True,context=context)
-		self.server_client=xmlrpc.client.ServerProxy("https://server:9779",allow_none=True,context=context)
+		self.server_client=xmlrpc.client.ServerProxy("https://%s:9779"%server,allow_none=True,context=context)
 		
 	#def init
 	
@@ -50,8 +62,7 @@ class XDGClientMountTest:
 	
 	def _are_user_mounts_ready(self):
 		
-		user=os.environ["USER"]
-		ret=self.local_client.user_mounts_found("","MountCheck",user)
+		ret=self.local_client.user_mounts_found("","MountCheck",self.user)
 		return ret["msg"]
 		
 	#def _are_user_mounts_ready
@@ -85,8 +96,6 @@ class XDGClientMountTest:
 					
 			else:
 				error_msg="Master server is not up. Working with local files only"
-		else:
-			sys.exit(0)
 		
 		self._dprint(error_msg)
 		self.run_dialog("Error mounting user directories",error_msg)
@@ -108,7 +117,7 @@ class XDGClientMountTest:
 
 	def run_kde_dialog(self,primary_msg,secondary_msg):
 
-		command='sleep 5;kdialog --title "%s" --passivepopup "%s" 15 --icon dialog-warning'%(primary_msg,secondary_msg)
+		command='sleep 3;kdialog --title "%s" --passivepopup "%s" 15 --icon dialog-warning'%(primary_msg,secondary_msg)
 		os.system(command)
 
 	#def run_kde_dialog
@@ -126,6 +135,9 @@ class XDGClientMountTest:
 
 if __name__=="__main__":
 	
-	xcmt=XDGClientMountTest()
-	xcmt.check_slave_mounts()
+	try:
+		xcmt=XDGClientMountTest()
+		xcmt.check_slave_mounts()
+	except Exception as e:
+		xcmt.run_dialog("Error checking mounted directories",str(e))
 	
