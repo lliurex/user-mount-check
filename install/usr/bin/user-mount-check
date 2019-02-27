@@ -80,7 +80,7 @@ class XDGClientMountTest:
 	
 	def check_slave_mounts(self):
 		
-		error_msg=""
+		error_msg=None
 		
 		if self._is_autofs_enabled():
 			self._dprint("AutoFS enabled on server")
@@ -98,9 +98,12 @@ class XDGClientMountTest:
 			else:
 				error_msg="Master server is not up. Working with local files only"
 		
-		self._dprint(error_msg)
-		self.run_dialog("Error mounting user directories",error_msg)
-		sys.exit(1)
+		if error_msg!=None:
+			self._dprint(error_msg)
+			self.run_dialog("Error mounting user directories",error_msg)
+			sys.exit(1)
+			
+		sys.exit(0)
 		
 	#def check_slave_mounts
 
