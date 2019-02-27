@@ -1,3 +1,9 @@
+user-mount-check (0.2.4) bionic; urgency=high
+
+  * sleep 5 seconds
+
+ -- Hector Garcia Huerta <hectorgh@gmail.com>  Wed, 27 Feb 2019 14:41:44 +0100
+
 user-mount-check (0.2.3) bionic; urgency=high
 
   * If there's no error, don't try to notify it ;)
