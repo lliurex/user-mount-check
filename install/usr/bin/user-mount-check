@@ -42,8 +42,6 @@ class XDGClientMountTest:
 		if XDGClientMountTest.DEBUG:
 			msg="[XDGClientMountTest] %s"%str(msg)
 			print(msg)
-			
-		
 		
 	#def _dprint
 	
@@ -121,7 +119,7 @@ class XDGClientMountTest:
 
 	def run_kde_dialog(self,primary_msg,secondary_msg):
 
-		command='sleep 3;kdialog --title "%s" --passivepopup "%s" 15 --icon dialog-warning'%(primary_msg,secondary_msg)
+		command='sleep 5;kdialog --title "%s" --passivepopup "%s" 15 --icon dialog-warning'%(primary_msg,secondary_msg)
 		os.system(command)
 
 	#def run_kde_dialog
